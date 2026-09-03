@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<base target="_top">
 <title>LTSC Admin</title>
 
 <link rel="manifest" href="manifest.json">
@@ -10,13 +11,10 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 
 <style>
-  html, body {
+  body {
     margin: 0;
     padding: 0;
-    width: 100%;
-    height: 100%;
     overflow: hidden;
-    background-color: #1C5CAB;
     font-family: system-ui, -apple-system, BlinkMacSystemFont;
   }
 
@@ -31,7 +29,7 @@
     justify-content: center;
     color: #fff;
     z-index: 9999;
-    transition: opacity .4s ease;
+    transition: opacity .5s ease;
   }
 
   #logo {
@@ -60,9 +58,9 @@
   }
 
   iframe {
+    display: none;
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
     border: none;
@@ -72,39 +70,34 @@
 
 <body>
 
+<!-- Splash -->
 <div id="splash">
   <img id="logo" src="icon-192.png" alt="HR Connect">
   <div class="spinner"></div>
   <div class="loading-text">HR Connect...</div>
 </div>
 
-<!-- ສັງເກດ: ບໍ່ມີຄຳວ່າ sandbox ແລ້ວ ເພື່ອໃຫ້ Google Script ເຮັດວຽກໄດ້ 100% -->
+<!-- App -->
 <iframe
   id="app"
   src="https://script.google.com/macros/s/AKfycbzU2Wc4YkupNH7bHhliguKRNhn93uZap9T9IOSE3XwOmn1wPX5Q6HuCKlCnWY2QEfIo/exec"
-  allow="fullscreen; camera; microphone; geolocation; autoplay">
+  allow="fullscreen">
 </iframe>
 
 <script>
   const splash = document.getElementById('splash');
-  const iframe = document.getElementById('app');
+  const app = document.getElementById('app');
 
-  function removeSplash() {
-    if (splash.style.display !== 'none') {
-      splash.style.opacity = '0';
+  app.onload = () => {
+    setTimeout(() => {
+      splash.style.opacity = 0;
+      app.style.display = 'block';
+
       setTimeout(() => {
         splash.style.display = 'none';
-      }, 400);
-    }
-  }
-
-  // ເມື່ອໂຫຼດສຳເລັດ
-  iframe.addEventListener('load', () => {
-    setTimeout(removeSplash, 500);
-  });
-
-  // ກັນພາດ: ຖ້າເນັດມືຖືຊ້າ ຫຼື iframe ບໍ່ຍອມສົ່ງ event load, ພາຍໃນ 5 ວິນາທີ ໃຫ້ເປີດເລີຍ
-  setTimeout(removeSplash, 5000);
+      }, 500);
+    }, 600); // หน่วงนิดให้ดู smooth
+  };
 </script>
 
 </body>
