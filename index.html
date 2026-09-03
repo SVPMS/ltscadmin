@@ -16,7 +16,6 @@
     padding: 0;
     overflow: hidden;
     font-family: system-ui, -apple-system, BlinkMacSystemFont;
-    background-color: #1C5CAB;
   }
 
   /* Splash Screen */
@@ -31,7 +30,6 @@
     color: #fff;
     z-index: 9999;
     transition: opacity .5s ease;
-    pointer-events: none; /* ອະນຸຍາດໃຫ້ກົດທະລຸໄດ້ຖ້າມີບັນຫາ */
   }
 
   #logo {
@@ -59,14 +57,13 @@
     opacity: .9;
   }
 
-  /* ສະແດງ iframe ໄວ້ເລີຍ ເພື່ອໃຫ້ມັນ Render ໃນ Background */
   iframe {
+    display: none;
     position: fixed;
     inset: 0;
     width: 100%;
     height: 100%;
     border: none;
-    display: block;
   }
 </style>
 </head>
@@ -80,34 +77,27 @@
   <div class="loading-text">HR Connect...</div>
 </div>
 
-<!-- App: ເພີ່ມ permissions allow ແລະ sandbox ເພື່ອຮອງຮັບ Mobile Browser -->
+<!-- App -->
 <iframe
   id="app"
   src="https://script.google.com/macros/s/AKfycbzU2Wc4YkupNH7bHhliguKRNhn93uZap9T9IOSE3XwOmn1wPX5Q6HuCKlCnWY2QEfIo/exec"
-  allow="fullscreen; geolocation; microphone; camera; clipboard-write;"
-  sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
+  allow="fullscreen">
 </iframe>
 
 <script>
   const splash = document.getElementById('splash');
   const app = document.getElementById('app');
 
-  function hideSplash() {
-    if (splash.style.display !== 'none') {
+  app.onload = () => {
+    setTimeout(() => {
       splash.style.opacity = 0;
+      app.style.display = 'block';
+
       setTimeout(() => {
         splash.style.display = 'none';
       }, 500);
-    }
-  }
-
-  // 1. ເມື່ອ iframe ໂຫຼດສຳເລັດ ໃຫ້ປິດ Splash Screen
-  app.onload = () => {
-    setTimeout(hideSplash, 400);
+    }, 600); // หน่วงนิดให้ดู smooth
   };
-
-  // 2. Fallback: ຖ້າເນັດມືຖືຊ້າ ຫຼື onload ບໍ່ທຳງານ ໃຫ້ບັງຄັບປິດ Splash ພາຍໃນ 6 ວິນາທີ
-  setTimeout(hideSplash, 6000);
 </script>
 
 </body>
