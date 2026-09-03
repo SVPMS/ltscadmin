@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<base target="_top">
 <title>LTSC Admin</title>
 
 <link rel="manifest" href="manifest.json">
@@ -16,6 +15,7 @@
     padding: 0;
     overflow: hidden;
     font-family: system-ui, -apple-system, BlinkMacSystemFont;
+    background-color: #1C5CAB;
   }
 
   /* Splash Screen */
@@ -29,7 +29,7 @@
     justify-content: center;
     color: #fff;
     z-index: 9999;
-    transition: opacity .5s ease;
+    transition: opacity .4s ease, visibility .4s;
   }
 
   #logo {
@@ -57,8 +57,8 @@
     opacity: .9;
   }
 
+  /* Iframe: ຕັ້ງໃຫ້ຢູ່ດ້ານຫຼັງ Splash Screen ຕັ້ງແຕ່ທຳອິດ (ບໍ່ໃຊ້ display: none) */
   iframe {
-    display: none;
     position: fixed;
     inset: 0;
     width: 100%;
@@ -70,34 +70,43 @@
 
 <body>
 
-<!-- Splash -->
+<!-- Splash Screen -->
 <div id="splash">
   <img id="logo" src="icon-192.png" alt="HR Connect">
   <div class="spinner"></div>
   <div class="loading-text">HR Connect...</div>
 </div>
 
-<!-- App -->
+<!-- App Iframe: ເພີ່ມ permissions ຕ່າງໆ ເພື່ອບໍ່ໃຫ້ບຣາວເຊີມືຖືບລັອກ -->
 <iframe
   id="app"
   src="https://script.google.com/macros/s/AKfycbzU2Wc4YkupNH7bHhliguKRNhn93uZap9T9IOSE3XwOmn1wPX5Q6HuCKlCnWY2QEfIo/exec"
-  allow="fullscreen">
+  allow="fullscreen; camera; microphone; geolocation"
+  sandbox="allow-top-navigation allow-scripts allow-forms allow-same-origin allow-popups allow-modals">
 </iframe>
 
 <script>
   const splash = document.getElementById('splash');
-  const app = document.getElementById('app');
+  let isHidden = false;
 
-  app.onload = () => {
+  // ຟັງຊັນປິດ Splash Screen
+  function hideSplash() {
+    if (isHidden) return;
+    isHidden = true;
+    splash.style.opacity = '0';
     setTimeout(() => {
-      splash.style.opacity = 0;
-      app.style.display = 'block';
+      splash.style.display = 'none';
+    }, 400);
+  }
 
-      setTimeout(() => {
-        splash.style.display = 'none';
-      }, 500);
-    }, 600); // หน่วงนิดให้ดู smooth
-  };
+  // 1. ຖ້າ iframe ໂຫຼດສຳເລັດປົກກະຕິ
+  document.getElementById('app').addEventListener('load', () => {
+    setTimeout(hideSplash, 500);
+  });
+
+  // 2. ຕົວປ້ອງກັນ (Fallback): ຖ້າເນັດມືຖືຊ້າ ຫຼື onload ບໍ່ທຳງານ 
+  // ພາຍໃນ 4 ວິນາທີ ຈະບັງຄັບເປີດໜ້າຕ່າງຂຶ້ນມາທັນທີ ບໍ່ໃຫ້ຄ້າງໜ້າ Splash
+  setTimeout(hideSplash, 4000);
 </script>
 
 </body>
